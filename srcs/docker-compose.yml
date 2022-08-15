@@ -8,8 +8,7 @@ services:
     build:
       context: requirements/mariadb/.
       args:
-        - DB_NAME=${DB_NAME}
-        - DB_USER=${DB_USER}
+        - {DB_USER}
         - DB_PASS=${DB_PASS}
         - DB_RACINE=${DB_RACINE}
         - DB_RPASS=${DB_RPASS}
