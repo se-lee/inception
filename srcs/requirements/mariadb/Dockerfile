@@ -5,5 +5,8 @@ RUN apt-get update \
 
 EXPOSE 3306
 
-COPY 
+#コンテナ実行時の入り口
+ENTRYPOINT [ "executable" ] 
+
+
 
