@@ -1,52 +1,93 @@
-version: 
+# version: 
 
 services: #つくりたいコンテナたちを記述する
   mariadb:
     image: mariadb
-    volumes: 
+    volumes:
+      - db_volume:/var/lib/mysql/
     restart: always
     environment:
       - name=value
     depends_on:
       - serviceName
-    ports: 
-    entrypoint:
+    # ports: 
+    # entrypoint:
     build:
-      context: buildContext
-      dockerfile:
+      context: ./requirements/mariadb
       args:
-    env_file:
+        - DB_NAME=${DB_NAME}
+        - DB_USER=${DB_USER}
+        - DB_PASS=${DB_PASS}
+        - DB_HOST=${DB_HOST}
     networks:
+      - 42network
   
   nginx:
     image: nginx
     volumes: 
+      - wp_volume:/var/www/html/
     restart: always
     environment:
       - name=value
     depends_on:
+      - wordpress
     ports: 443:443 # Containerの外とつなぐポート（WWWにつなぐポート）
     entrypoint:
-    build: ./requirements/nginx
-      context: 
-      dockerfile:
-      args:
+    build:
+      context: ./requirements/nginx/
+      # dockerfile:
+      # args:
     env_file:
     networks:
+      - 42network
 
   wordpress:
-    image: 
-    volumes: 
+    image: wordpress
+    volumes:
+      - wp_volume:/var/www/html/
     restart: always
     environment:
-      - name=value
+      - WP_ADMIN=${WP_ADMIN}
+      - WP_APASS=${WP_APASS}
+      - WP_AMAIL=${WP_AMAIL}
+      - WP_USER=${WP_USER}
+      - WP_PASS=${WP_APASS}
+      - WP_MAIL=${WP_MAIL}
+      - WP_TITLE=${WP_TITLE}
+      - WP_URL=${WP_URL}
     depends_on:
-      - serviceName
+      - mariadb
     ports:
     entrypoint:
     build:
-      context: buildContext
-      dockerfile:
+      context: ./requirements/
       args:
+        - DB_NAME=${DB_NAME}
+        - DB_USER=${DB_USER}
+        - DB_PASS=${DB_PASS}
+        - DB_HOST=${DB_HOST}
     env_file:
     networks:
+      - 42network
+
+volumes:
+  wp_volume:
+    name: wp_volume
+    driver: local
+    driver_opts:
+      device: ${BUILD_PATH}wp_volume
+      o: bind
+      type: none
+  db_volume:
+    name: db_volume
+    driver: local
+    driver_opts:
+      device: ${BUILD_PATH}db_volume
+      o: bind
+      type: none
+
+networks:
+  42network:
+    name: 42network
+    driver: bridge
+
