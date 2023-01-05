@@ -1,3 +1,6 @@
 FROM debian:buster
 
-RUN 
+RUN apt-get update -y && apt-get upgrade -y \
+	&& apt-get install -y 
+
+EXPOSE 9000

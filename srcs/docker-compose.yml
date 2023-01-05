@@ -1,53 +1,52 @@
 version: 
 
 services: #つくりたいコンテナたちを記述する
-  # mariadb:
-  #   image: mariadb
-  #   volumes: 
-  #   restart: always
-  #   environment:
-  #     - name=value
-  #   depends_on:
-  #     - serviceName
-  #   ports: 
-  #   entrypoint:
-  #   build:
-  #     context: buildContext
-  #     dockerfile:
-  #     args:
-  #   env_file:
-  #   networks:
+  mariadb:
+    image: mariadb
+    volumes: 
+    restart: always
+    environment:
+      - name=value
+    depends_on:
+      - serviceName
+    ports: 
+    entrypoint:
+    build:
+      context: buildContext
+      dockerfile:
+      args:
+    env_file:
+    networks:
   
   nginx:
     image: nginx
     volumes: 
     restart: always
-    # environment:
-    #   - name=value
+    environment:
+      - name=value
     depends_on:
-      - serviceName
     ports: 443:443 # Containerの外とつなぐポート（WWWにつなぐポート）
     entrypoint:
     build: ./requirements/nginx
-      # context: buildContext
+      context: 
       dockerfile:
       args:
     env_file:
     networks:
 
-  # wordpress:
-  #   image: 
-  #   volumes: 
-  #   restart: always
-  #   environment:
-  #     - name=value
-  #   depends_on:
-  #     - serviceName
-  #   ports:
-  #   entrypoint:
-  #   build:
-  #     context: buildContext
-  #     dockerfile:
-  #     args:
-  #   env_file:
-  #   networks:
+  wordpress:
+    image: 
+    volumes: 
+    restart: always
+    environment:
+      - name=value
+    depends_on:
+      - serviceName
+    ports:
+    entrypoint:
+    build:
+      context: buildContext
+      dockerfile:
+      args:
+    env_file:
+    networks:
