@@ -7,6 +7,3 @@ EXPOSE 3306
 
 #コンテナ実行時の入り口
 ENTRYPOINT [ "executable" ] 
-
-
-
