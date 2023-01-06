@@ -1,11 +1,13 @@
 FROM debian:buster
 
-# download php-fpm
-RUN apt-get update -y && apt-get upgrade -y \
-	&& apt-get install -y curl php php-cgi php-common php-fpm php-pear php-mbstring php-zip \
-	php-net-socket php-gd php-xml-util php-gettext php-mysql php-bcmath \
-	&& mkdir -p /var/www/html/wordpress && rm -rf /etc/php/7.3/fpm/pool.d/www.conf
+RUN apt-get update -y && apt-get upgrade -y
 
+# RUN apt-get install -y curl php php-cgi php-common php-fpm php-pear php-mbstring php-zip \
+# 	php-net-socket php-gd php-xml-util php-gettext php-mysql php-bcmath \
+# 	&& mkdir -p /var/www/html/wordpress && rm -rf /etc/php/7.3/fpm/pool.d/www.conf
+
+RUN apt-get install -y php-fpm php-mysql curl php-mbstring php-zip php-gd php-xml php-pear php-gettext php-cgi \
+	&& mkdir -p /var/www/html/wordpress && rm -rf /etc/php/7.3/fpm/pool.d/www.conf
 
 ARG	DB_NAME=${DB_NAME}
 ARG DB_USER=${DB_USER}
@@ -22,30 +24,27 @@ ENV WP_TITLE=${WP_TITLE}
 ENV WP_URL=${WP_URL}
 
 # copy the www.conf file in php/7.3/fpm/pool.d/
-COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/www.conf
+COPY /conf/www.conf /etc/php/7.3/fpm/pool.d/www.conf
 
 RUN service php7.3-fpm start \
-	&& curl -0 https://wordpress.org/wordpress-5.9.2.tar.gz \
+	&& curl -O https://wordpress.org/wordpress-5.9.2.tar.gz \
 	&& mkdir -p /var/www/html/ \
 	&& tar xvf wordpress-5.9.2.tar.gz --directory /var/www/html/ \
 	&& rm wordpress-5.9.2.tar.gz
 
-RUN curl -0 https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
 	&& chmod +x wp-cli.phar \
 	&& mv wp-cli.phar /usr/local/bin/wp
 
 COPY ./conf/wp-config.php /var/www/html/wordpress/wp-config.php
 
 RUN sed -i "s/db_name_here/${DB_NAME}/g" /var/www/html/wordpress/wp-config.php \
-		&& sed -i "s/db_user_here/${DB_USER}/g" /var/www/html/wordpress/wp-config.php \
-		&& sed -i "s/db_pass_here/${DB_PASS}/g" /var/www/html/wordpress/wp-config.php \
-		&& sed -i "s/db_host_here/${DB_HOST}/g" /var/www/html/wordpress/wp-config.php
+	&& sed -i "s/db_user_here/${DB_USER}/g" /var/www/html/wordpress/wp-config.php \
+	&& sed -i "s/db_pass_here/${DB_PASS}/g" /var/www/html/wordpress/wp-config.php \
+	&& sed -i "s/db_host_here/${DB_HOST}/g" /var/www/html/wordpress/wp-config.php
 
-COPY ./script/run.sh /
+COPY /script/run.sh /
 
 EXPOSE 9000
 
 CMD [ "sh", "/run.sh" ]
-
-
-

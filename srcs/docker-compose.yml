@@ -1,21 +1,13 @@
-# version: 
+# version: '3.7'
 
 services: #つくりたいコンテナたちを記述する
   mariadb:
     image: mariadb
+    restart: always
     container_name: mariadb
     init: true
-    volumes:
-      - db_volume:/var/lib/mysql/
-    restart: always
-    # environment:
-    #   - name=value
-    # env_file:
-    #   - .env
-    # ports: 
-    # entrypoint:
     build:
-      context: ./requirements/mariadb/.
+      context: requirements/mariadb/.
       args:
         - DB_NAME=${DB_NAME}
         - DB_USER=${DB_USER}
@@ -24,31 +16,18 @@ services: #つくりたいコンテナたちを記述する
         - DB_RPASS=${DB_RPASS}
     networks:
       - 42network
-  
-  nginx:
-    image: nginx
-    container_name: nginx
-    init: true
-    volumes: 
-      - wp_volume:/var/www/html/
-    restart: always
+    volumes:
+      - db_volume:/var/lib/mysql/
     # environment:
     #   - name=value
-    depends_on:
-      - wordpress
-    ports: 443:443 # Containerの外とつなぐポート（WWWにつなぐポート）
+    # env_file: .env
+    # ports: 
     # entrypoint:
-    build:
-      context: ./requirements/nginx/.
-      # dockerfile:
-      # args:
-    # env_file:
-    networks:
-      - 42network
-
+  
   wordpress:
     image: wordpress
     container_name: wordpress
+    init: true
     volumes:
       - wp_volume:/var/www/html/
     restart: always
@@ -57,14 +36,14 @@ services: #つくりたいコンテナたちを記述する
     # ports:
     # entrypoint:
     build:
-      context: ./requirements/wordpress/.
+      context: requirements/wordpress/.
       args:
         - DB_NAME=${DB_NAME}
         - DB_USER=${DB_USER}
         - DB_PASS=${DB_PASS}
         - DB_RACINE=${DB_RACINE}
         - DB_HOST=${DB_HOST}
-    # env_file:
+    # env_file: .env
     environment:
       - WP_ADMIN=${WP_ADMIN}
       - WP_APASS=${WP_APASS}
@@ -77,19 +56,43 @@ services: #つくりたいコンテナたちを記述する
     networks:
       - 42network
 
+  nginx:
+    image: nginx
+    restart: always
+    container_name: nginx
+    init: true
+    build:
+      context: requirements/nginx/.
+    volumes: 
+      - wp_volume:/var/www/html/
+    # environment:
+    #   - name=value
+    depends_on:
+      - wordpress
+    # Containerの外とつなぐポート（WWWにつなぐポート）
+    ports: 
+      - "443:443"
+    # entrypoint:
+      # dockerfile:
+      # args:
+    # env_file:
+    #   - .env
+    networks:
+      - 42network
+
 volumes:
   wp_volume:
     name: wp_volume
     driver: local
     driver_opts:
-      device: ${BUILD_PATH}wp_volume
+      device: /home/selee/data/wp_volume
       o: bind
       type: none
   db_volume:
     name: db_volume
     driver: local
     driver_opts:
-      device: ${BUILD_PATH}db_volume
+      device: /home/selee/data/db_volume
       o: bind
       type: none
 
