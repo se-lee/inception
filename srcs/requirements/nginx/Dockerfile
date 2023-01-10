@@ -1,13 +1,12 @@
 # base image
 FROM debian:buster
 
-# run commands
-# update && upgrade
 RUN apt-get update -y && apt-get upgrade -y
+
 RUN apt-get install -y nginx openssl
 
 # copy the file to the container
-COPY /conf/nginx.conf /etc/nginx/sites-available/default
+COPY /config/html.conf /etc/nginx/sites-available/default
 
 RUN mkdir -p /etc/certificate \
 	&& openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 -subj \
@@ -16,3 +15,4 @@ RUN mkdir -p /etc/certificate \
 
 # コンテナ実行時の実行コマンド
 CMD ["nginx", "-g", "daemon off;"]
+# CMD ["sleep", "infinity"]

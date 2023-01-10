@@ -13,12 +13,12 @@ RUN mkdir -p /var/lib/docker/volumes/db_volume
 
 RUN		service mysql start \
 		&&	mariadb -u root -e \
-		"CREATE DATABASE ${DB_NAME}; \
-		CREATE USER ${DB_USER}@'%' IDENTIFIED BY '${DB_PASS}'; \
-		GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO ${DB_USER}@'%'; \
+		"CREATE DATABASE ${DB_NAME};\
+		CREATE USER ${DB_USER}@'%' IDENTIFIED BY '${DB_PASS}';\
+		GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO ${DB_USER}@'%';\
 		ALTER USER ${DB_RACINE}@'localhost' IDENTIFIED BY '${DB_RPASS}';"
 
 EXPOSE 3306
 
 #コンテナ実行時の入り口
-ENTRYPOINT [ "mysqld", "--bind-address=0.0.0.0" ] 
+CMD ["mysqld", "--bind-address=0.0.0.0"] 

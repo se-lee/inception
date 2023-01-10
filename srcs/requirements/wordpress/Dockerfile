@@ -24,7 +24,7 @@ ENV WP_TITLE=${WP_TITLE}
 ENV WP_URL=${WP_URL}
 
 # copy the www.conf file in php/7.3/fpm/pool.d/
-COPY /conf/www.conf /etc/php/7.3/fpm/pool.d/www.conf
+COPY /config/www.conf /etc/php/7.3/fpm/pool.d/www.conf
 
 RUN service php7.3-fpm start \
 	&& curl -O https://wordpress.org/wordpress-5.9.2.tar.gz \
@@ -36,7 +36,7 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
 	&& chmod +x wp-cli.phar \
 	&& mv wp-cli.phar /usr/local/bin/wp
 
-COPY ./conf/wp-config.php /var/www/html/wordpress/wp-config.php
+COPY /config/wp-config.php /var/www/html/wordpress/wp-config.php
 
 RUN sed -i "s/db_name_here/${DB_NAME}/g" /var/www/html/wordpress/wp-config.php \
 	&& sed -i "s/db_user_here/${DB_USER}/g" /var/www/html/wordpress/wp-config.php \
@@ -48,3 +48,4 @@ COPY /script/run.sh /
 EXPOSE 9000
 
 CMD [ "sh", "/run.sh" ]
+# CMD ["sleep", "infinity"]

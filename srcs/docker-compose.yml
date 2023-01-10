@@ -1,9 +1,25 @@
 # version: '3.7'
 
-services: #つくりたいコンテナたちを記述する
+services:
+  nginx:
+    image: nginx
+    restart: on-failure
+    container_name: nginx
+    init: true
+    build:
+      context: requirements/nginx/.
+    volumes: 
+      - wp_volume:/var/www/html/
+    depends_on:
+      - wordpress
+    ports: 
+      - "443:443"
+    networks:
+      - 42network
+
   mariadb:
     image: mariadb
-    restart: always
+    restart: on-failure
     container_name: mariadb
     init: true
     build:
@@ -18,11 +34,6 @@ services: #つくりたいコンテナたちを記述する
       - 42network
     volumes:
       - db_volume:/var/lib/mysql/
-    # environment:
-    #   - name=value
-    # env_file: .env
-    # ports: 
-    # entrypoint:
   
   wordpress:
     image: wordpress
@@ -30,11 +41,9 @@ services: #つくりたいコンテナたちを記述する
     init: true
     volumes:
       - wp_volume:/var/www/html/
-    restart: always
+    restart: on-failure
     depends_on:
       - mariadb
-    # ports:
-    # entrypoint:
     build:
       context: requirements/wordpress/.
       args:
@@ -43,7 +52,6 @@ services: #つくりたいコンテナたちを記述する
         - DB_PASS=${DB_PASS}
         - DB_RACINE=${DB_RACINE}
         - DB_HOST=${DB_HOST}
-    # env_file: .env
     environment:
       - WP_ADMIN=${WP_ADMIN}
       - WP_APASS=${WP_APASS}
@@ -53,30 +61,6 @@ services: #つくりたいコンテナたちを記述する
       - WP_MAIL=${WP_MAIL}
       - WP_TITLE=${WP_TITLE}
       - WP_URL=${WP_URL}
-    networks:
-      - 42network
-
-  nginx:
-    image: nginx
-    restart: always
-    container_name: nginx
-    init: true
-    build:
-      context: requirements/nginx/.
-    volumes: 
-      - wp_volume:/var/www/html/
-    # environment:
-    #   - name=value
-    depends_on:
-      - wordpress
-    # Containerの外とつなぐポート（WWWにつなぐポート）
-    ports: 
-      - "443:443"
-    # entrypoint:
-      # dockerfile:
-      # args:
-    # env_file:
-    #   - .env
     networks:
       - 42network
 
