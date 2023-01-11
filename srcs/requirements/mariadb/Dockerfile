@@ -20,5 +20,4 @@ RUN		service mysql start \
 
 EXPOSE 3306
 
-#コンテナ実行時の入り口
 CMD ["mysqld", "--bind-address=0.0.0.0"] 

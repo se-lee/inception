@@ -1,9 +1,9 @@
-# version: '3.7'
+version: '3.8'
 
 services:
   nginx:
     image: nginx
-    restart: on-failure
+    restart: always
     container_name: nginx
     init: true
     build:
@@ -19,7 +19,7 @@ services:
 
   mariadb:
     image: mariadb
-    restart: on-failure
+    restart: always
     container_name: mariadb
     init: true
     build:
@@ -41,7 +41,7 @@ services:
     init: true
     volumes:
       - wp_volume:/var/www/html/
-    restart: on-failure
+    restart: always
     depends_on:
       - mariadb
     build:
@@ -66,14 +66,12 @@ services:
 
 volumes:
   wp_volume:
-    name: wp_volume
     driver: local
     driver_opts:
       device: /home/selee/data/wp_volume
       o: bind
       type: none
   db_volume:
-    name: db_volume
     driver: local
     driver_opts:
       device: /home/selee/data/db_volume
@@ -82,5 +80,4 @@ volumes:
 
 networks:
   42network:
-    name: 42network
     driver: bridge
