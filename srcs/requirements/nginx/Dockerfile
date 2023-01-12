@@ -5,7 +5,6 @@ RUN apt-get update -y && apt-get upgrade -y
 
 RUN apt-get install -y nginx openssl
 
-# copy the file to the container
 COPY /config/html.conf /etc/nginx/sites-available/default
 
 RUN mkdir -p /etc/certificate \
@@ -14,6 +13,4 @@ RUN mkdir -p /etc/certificate \
 	-keyout /etc/certificate/selee.42.fr.key \
 	-out /etc/certificate/selee.42.fr.crt
 
-# コンテナ実行時の実行コマンド
 CMD ["nginx", "-g", "daemon off;"]
-# CMD ["sleep", "infinity"]

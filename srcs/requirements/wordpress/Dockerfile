@@ -2,10 +2,6 @@ FROM debian:buster
 
 RUN apt-get update -y && apt-get upgrade -y
 
-# RUN apt-get install -y curl php php-cgi php-common php-fpm php-pear php-mbstring php-zip \
-# 	php-net-socket php-gd php-xml-util php-gettext php-mysql php-bcmath \
-# 	&& mkdir -p /var/www/html/wordpress && rm -rf /etc/php/7.3/fpm/pool.d/www.conf
-
 RUN apt-get install -y php-fpm php-mysql curl php-mbstring php-zip php-gd php-xml php-pear php-gettext php-cgi \
 	&& mkdir -p /var/www/html/wordpress && rm -rf /etc/php/7.3/fpm/pool.d/www.conf
 
@@ -48,4 +44,3 @@ COPY /script/run.sh /
 EXPOSE 9000
 
 CMD [ "sh", "/run.sh" ]
-# CMD ["sleep", "infinity"]
